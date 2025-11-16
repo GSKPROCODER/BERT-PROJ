@@ -33,9 +33,7 @@ async def analyze_sentiment(
         return SentimentResponse(**result)
     except Exception as e:
         logger.error(f"Error analyzing sentiment: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, detail=f"Error analyzing sentiment: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error analyzing sentiment: {str(e)}")
 
 
 @router.post("/analysis/emotion", response_model=EmotionResponse)
@@ -49,9 +47,7 @@ async def analyze_emotion(
         return EmotionResponse(**result)
     except Exception as e:
         logger.error(f"Error analyzing emotion: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, detail=f"Error analyzing emotion: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error analyzing emotion: {str(e)}")
 
 
 @router.post("/analysis/bulk", response_model=BulkAnalysisResponse)
@@ -95,9 +91,7 @@ async def analyze_bulk(
         )
     except Exception as e:
         logger.error(f"Error in bulk analysis: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, detail=f"Error in bulk analysis: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error in bulk analysis: {str(e)}")
 
 
 @router.post("/analysis/aspects", response_model=AspectAnalysisResponse)
@@ -124,6 +118,4 @@ async def analyze_aspects(
         return AspectAnalysisResponse(**result)
     except Exception as e:
         logger.error(f"Error analyzing aspects: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500, detail=f"Error analyzing aspects: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error analyzing aspects: {str(e)}")

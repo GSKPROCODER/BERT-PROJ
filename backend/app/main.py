@@ -49,4 +49,3 @@ app.include_router(sentiment.router, prefix="/api", tags=["sentiment"])
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
-

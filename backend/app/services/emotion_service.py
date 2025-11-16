@@ -62,4 +62,3 @@ class EmotionService:
 
 def get_emotion_service() -> EmotionService:
     return EmotionService()
-
