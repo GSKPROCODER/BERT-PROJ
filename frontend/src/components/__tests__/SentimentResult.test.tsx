@@ -14,8 +14,8 @@ describe('SentimentResult', () => {
     };
 
     render(<SentimentResult result={result} />);
-    expect(screen.getByText(/positive/i)).toBeInTheDocument();
-    expect(screen.getByText(/95.0% confidence/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('positive');
+    expect(screen.getByText(/95\.0% confidence/i)).toBeInTheDocument();
   });
 
   it('renders negative sentiment correctly', () => {
@@ -29,8 +29,8 @@ describe('SentimentResult', () => {
     };
 
     render(<SentimentResult result={result} />);
-    expect(screen.getByText(/negative/i)).toBeInTheDocument();
-    expect(screen.getByText(/87.0% confidence/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('negative');
+    expect(screen.getByText(/87\.0% confidence/i)).toBeInTheDocument();
   });
 
   it('renders neutral sentiment correctly', () => {
@@ -44,8 +44,8 @@ describe('SentimentResult', () => {
     };
 
     render(<SentimentResult result={result} />);
-    expect(screen.getByText(/neutral/i)).toBeInTheDocument();
-    expect(screen.getByText(/75.0% confidence/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('neutral');
+    expect(screen.getByText(/75\.0% confidence/i)).toBeInTheDocument();
   });
 });
 

@@ -114,6 +114,46 @@ class AspectService:
             if aspect["text"].lower() not in [a["text"].lower() for a in unique_aspects]:
                 unique_aspects.append(aspect)
 
+        # If no aspects found by spaCy, apply a lightweight heuristic fallback
+        if not unique_aspects:
+            logger.info("No spaCy aspects found — running heuristic fallback extractor")
+            # Simple heuristic: extract frequent 2-word noun-like sequences excluding stopwords
+            stopwords = set([
+                'the', 'a', 'an', 'this', 'that', 'these', 'those', 'and', 'or', 'but', 'is', 'are', 'was', 'were',
+                'it', 'i', 'you', 'he', 'she', 'we', 'they', 'to', 'for', 'of', 'in', 'on', 'with', 'by', 'be',
+                'has', 'have', 'had', 'its', 'my', 'your', 'our', 'their', 'too'
+            ])
+            words = re.findall(r"[A-Za-z]+(?:'[A-Za-z]+)?", text)
+            candidates = []
+            for i in range(len(words) - 1):
+                w1 = words[i].lower()
+                w2 = words[i + 1].lower()
+                if w1 not in stopwords and w2 not in stopwords and len(w1) > 2 and len(w2) > 2:
+                    cand = f"{w1} {w2}"
+                    candidates.append(cand)
+
+            seen = set()
+            heuristics = []
+            for idx, cand in enumerate(candidates):
+                if cand in seen:
+                    continue
+                seen.add(cand)
+                # find position in text (first occurrence)
+                m = re.search(re.escape(cand), text, flags=re.IGNORECASE)
+                start = m.start() if m else 0
+                heuristics.append({
+                    "text": cand,
+                    "type": "heuristic",
+                    "label": "HEURISTIC",
+                    "start": start,
+                    "end": start + len(cand),
+                })
+                if len(heuristics) >= 10:
+                    break
+
+            if heuristics:
+                return heuristics
+
         return unique_aspects[:10]  # Limit to top 10 aspects
 
     def extract_context(self, text: str, aspect: Dict[str, any], window: int = 50) -> str:

@@ -9,6 +9,7 @@ from app.routers import sentiment
 from app.utils.redis_client import get_redis_client
 from app.utils.logging_config import setup_logging
 from app.models.model_loader import load_models
+from app.services.aspect_service import get_nlp_model
 
 setup_logging()
 
@@ -16,6 +17,12 @@ setup_logging()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     load_models()
+    # Ensure spaCy model is loaded at startup so readiness is verified early
+    try:
+        get_nlp_model()
+    except Exception:
+        # get_nlp_model logs errors; allow startup to continue but it will fall back later
+        pass
     redis_client = await get_redis_client()
     await FastAPILimiter.init(redis_client)
     yield

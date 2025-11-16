@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SentimentForm from '../SentimentForm';
 import { analyzeSentiment } from '../../services/api';
@@ -39,8 +39,10 @@ describe('SentimentForm', () => {
     const textarea = screen.getByLabelText(/enter text to analyze/i);
     const button = screen.getByRole('button', { name: /analyze sentiment/i });
 
-    await userEvent.type(textarea, 'I love this product!');
-    await userEvent.click(button);
+    await act(async () => {
+      await userEvent.type(textarea, 'I love this product!');
+      await userEvent.click(button);
+    });
 
     await waitFor(() => {
       expect(mockAnalyzeSentiment).toHaveBeenCalledWith('I love this product!');
@@ -55,23 +57,22 @@ describe('SentimentForm', () => {
     const textarea = screen.getByLabelText(/enter text to analyze/i);
     const button = screen.getByRole('button', { name: /analyze sentiment/i });
 
-    await userEvent.type(textarea, 'Test text');
-    await userEvent.click(button);
+    await act(async () => {
+      await userEvent.type(textarea, 'Test text');
+      await userEvent.click(button);
+    });
 
     await waitFor(() => {
       expect(mockOnError).toHaveBeenCalledWith('API Error');
     });
   });
 
-  it('shows error for empty submission', async () => {
+  it('button is disabled initially', () => {
     render(<SentimentForm onResult={mockOnResult} onError={mockOnError} />);
     const button = screen.getByRole('button', { name: /analyze sentiment/i });
-
-    await userEvent.click(button);
-
-    await waitFor(() => {
-      expect(mockOnError).toHaveBeenCalledWith('Please enter some text to analyze');
-    });
+    
+    // Button should be disabled when no text is entered
+    expect(button).toBeDisabled();
   });
 });
 
