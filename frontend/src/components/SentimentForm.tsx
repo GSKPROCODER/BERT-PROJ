@@ -45,9 +45,9 @@ export default function SentimentForm({
         setText(customEvent.detail);
       }
     };
-    window.addEventListener('textInput' as any, handleTextInput);
+    window.addEventListener('textInput' as unknown as string, handleTextInput);
     return () => {
-      window.removeEventListener('textInput' as any, handleTextInput);
+      window.removeEventListener('textInput' as unknown as string, handleTextInput);
     };
   }, []);
 
