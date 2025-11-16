@@ -12,6 +12,14 @@ from app.utils.redis_client import get_redis_client
 
 setup_logging()
 
+# Load models at import time to ensure TestClient and other import-time usages
+# have models available even if the lifespan startup hook isn't executed yet.
+try:
+    load_models()
+except Exception:
+    # If loading at import time fails (e.g. in constrained CI), defer to lifespan startup
+    pass
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

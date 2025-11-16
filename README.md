@@ -113,3 +113,17 @@ See `.env.example` for required environment variables.
 ## License
 
 MIT
+
+## Production
+
+To run the stack in a production-like mode (build an image that runs `gunicorn` and does not mount the local source), use the provided compose file:
+
+```powershell
+docker-compose -f docker-compose.prod.yml up --build -d
+```
+
+Notes:
+
+- The production compose file does not mount the backend source directory into the container; changes require rebuilding the image.
+- Logs are written to stdout/stderr by Gunicorn so you can collect them with your container logging driver. Consider configuring a log aggregator or log rotation on the host.
+- The Gunicorn config `backend/gunicorn_conf.py` preloads the application at startup so models are loaded once before workers fork.

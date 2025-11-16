@@ -17,6 +17,10 @@ class SentimentResponse(BaseModel):
     scores: dict[str, float] = Field(
         ..., description="Sentiment scores with keys: positive, neutral, negative"
     )
+    confidence: float = Field(..., description="Confidence score for the chosen sentiment")
+    probabilities: dict[str, float] = Field(
+        ..., description="Probability distribution over sentiment labels"
+    )
 
 
 class EmotionRequest(BaseModel):

@@ -18,7 +18,7 @@ class SentimentService:
 
     def _get_cache_key(self, text: str) -> str:
         text_hash = hashlib.sha256(text.encode()).hexdigest()
-        return f"sentiment:v2:{text_hash}"
+        return f"sentiment:v3:{text_hash}"
 
     async def analyze(self, text: str) -> dict[str, any]:
         cache_key = self._get_cache_key(text)
@@ -67,9 +67,17 @@ class SentimentService:
             "negative": negative_score,
         }
 
+        # Confidence is the score for the chosen sentiment
+        confidence = float(result_scores.get(sentiment, 0.0))
+
+        # probabilities mirrors scores for backward compatibility with older clients
+        probabilities = dict(result_scores)
+
         return {
             "sentiment": sentiment,
             "scores": result_scores,
+            "confidence": confidence,
+            "probabilities": probabilities,
         }
 
 

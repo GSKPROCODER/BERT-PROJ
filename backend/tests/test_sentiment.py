@@ -1,17 +1,13 @@
 import pytest
-from fastapi.testclient import TestClient
-from app.main import app
-
-client = TestClient(app)
 
 
-def test_health_check():
+def test_health_check(client):
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "healthy"}
 
 
-def test_analyze_sentiment_positive():
+def test_analyze_sentiment_positive(client):
     response = client.post(
         "/api/analyze",
         json={"text": "I love this product! It's amazing!"},
@@ -25,7 +21,7 @@ def test_analyze_sentiment_positive():
     assert 0.0 <= data["confidence"] <= 1.0
 
 
-def test_analyze_sentiment_negative():
+def test_analyze_sentiment_negative(client):
     response = client.post(
         "/api/analyze",
         json={"text": "This is terrible and I hate it."},
@@ -36,17 +32,17 @@ def test_analyze_sentiment_negative():
     assert data["sentiment"] in ["positive", "negative", "neutral"]
 
 
-def test_analyze_sentiment_empty_text():
+def test_analyze_sentiment_empty_text(client):
     response = client.post("/api/analyze", json={"text": ""})
     assert response.status_code == 422
 
 
-def test_analyze_sentiment_whitespace_only():
+def test_analyze_sentiment_whitespace_only(client):
     response = client.post("/api/analyze", json={"text": "   "})
     assert response.status_code == 422
 
 
-def test_analyze_sentiment_missing_field():
+def test_analyze_sentiment_missing_field(client):
     response = client.post("/api/analyze", json={})
     assert response.status_code == 422
 
