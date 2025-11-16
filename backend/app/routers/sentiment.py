@@ -1,8 +1,7 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi_limiter.depends import RateLimiter
-from fastapi import Request, Response
 
 from app.models.schemas import (
     AspectAnalysisResponse,
