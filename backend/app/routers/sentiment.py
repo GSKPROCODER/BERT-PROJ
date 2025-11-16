@@ -22,7 +22,9 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-async def _maybe_rate_limit(request: Request, response: Response, times: int = 10, seconds: int = 60):
+async def _maybe_rate_limit(
+    request: Request, response: Response, times: int = 10, seconds: int = 60
+):
     """Apply rate limiting only if FastAPILimiter has been initialized.
 
     This avoids test-time failures when the limiter hasn't been started.
