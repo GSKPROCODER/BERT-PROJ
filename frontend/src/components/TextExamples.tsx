@@ -13,7 +13,7 @@ const EXAMPLES = [
   },
   {
     label: 'Neutral',
-    text: 'The customer service team responded, but the reply seemed automated.',
+    text: 'The product arrived on time. It functions as described in the specifications.',
   },
   {
     label: 'Mixed',
