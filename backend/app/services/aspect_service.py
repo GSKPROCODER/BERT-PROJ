@@ -1,12 +1,13 @@
 import logging
 import re
-from typing import List, Dict, Optional
+
 import spacy
+
 from app.services.sentiment_service import get_sentiment_service
 
 logger = logging.getLogger(__name__)
 
-nlp: Optional[spacy.Language] = None
+nlp: spacy.Language | None = None
 
 
 def get_nlp_model():
@@ -50,11 +51,11 @@ class AspectService:
         self.sentiment_service = get_sentiment_service()
         get_nlp_model()
 
-    def extract_aspects(self, text: str) -> List[Dict[str, any]]:
+    def extract_aspects(self, text: str) -> list[dict[str, any]]:
         """Extract noun phrases and named entities as aspects."""
         nlp_model = get_nlp_model()
         doc = nlp_model(text)
-        
+
         aspects = []
         seen_aspects = set()
 
@@ -79,7 +80,7 @@ class AspectService:
                 if (
                     len(chunk_text) > 2
                     and chunk_text.lower() not in seen_aspects
-                    and not chunk_text.lower() in ["i", "you", "he", "she", "it", "we", "they"]
+                    and chunk_text.lower() not in ["i", "you", "he", "she", "it", "we", "they"]
                 ):
                     # Filter out very common words
                     if not re.match(r'^(the|a|an|this|that|these|those)\s+', chunk_text.lower()):
@@ -156,37 +157,37 @@ class AspectService:
 
         return unique_aspects[:10]  # Limit to top 10 aspects
 
-    def extract_context(self, text: str, aspect: Dict[str, any], window: int = 50) -> str:
+    def extract_context(self, text: str, aspect: dict[str, any], window: int = 50) -> str:
         """Extract context around an aspect for sentiment analysis."""
         start = max(0, aspect["start"] - window)
         end = min(len(text), aspect["end"] + window)
-        
+
         context = text[start:end]
-        
+
         # Try to get sentence containing the aspect
         nlp_model = get_nlp_model()
         doc = nlp_model(text)
         for sent in doc.sents:
             if sent.start_char <= aspect["start"] <= sent.end_char:
                 return sent.text.strip()
-        
+
         return context.strip()
 
     async def analyze_aspect_sentiment(
-        self, text: str, aspect: Dict[str, any]
-    ) -> Dict[str, any]:
+        self, text: str, aspect: dict[str, any]
+    ) -> dict[str, any]:
         """Analyze sentiment for a specific aspect."""
         context = self.extract_context(text, aspect)
-        
+
         # Create aspect-specific prompt
         aspect_text = aspect["text"]
         prompt = f"{aspect_text}: {context}"
-        
+
         sentiment_result = await self.sentiment_service.analyze(prompt)
-        
+
         scores = sentiment_result["scores"]
         confidence = max(scores.values())
-        
+
         return {
             "sentiment": sentiment_result["sentiment"],
             "confidence": confidence,
@@ -194,10 +195,10 @@ class AspectService:
             "context": context,
         }
 
-    async def analyze_aspects(self, text: str) -> Dict[str, any]:
+    async def analyze_aspects(self, text: str) -> dict[str, any]:
         """Perform aspect-based sentiment analysis."""
         aspects = self.extract_aspects(text)
-        
+
         if not aspects:
             return {
                 "text": text,
@@ -231,8 +232,8 @@ class AspectService:
         }
 
     def _calculate_overall_sentiment(
-        self, aspect_results: List[Dict[str, any]]
-    ) -> Dict[str, any]:
+        self, aspect_results: list[dict[str, any]]
+    ) -> dict[str, any]:
         """Calculate overall sentiment from aspect sentiments."""
         if not aspect_results:
             return {
@@ -257,7 +258,7 @@ class AspectService:
             sentiment = max(weighted_sentiments.items(), key=lambda x: x[1])[0]
 
         confidence = weighted_sentiments[sentiment]
-        
+
         return {
             "sentiment": sentiment,
             "confidence": confidence,

@@ -1,15 +1,14 @@
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter import FastAPILimiter
-import redis.asyncio as redis
-import logging
 
-from app.routers import sentiment
-from app.utils.redis_client import get_redis_client
-from app.utils.logging_config import setup_logging
 from app.models.model_loader import load_models
+from app.routers import sentiment
 from app.services.aspect_service import get_nlp_model
+from app.utils.logging_config import setup_logging
+from app.utils.redis_client import get_redis_client
 
 setup_logging()
 

@@ -1,8 +1,8 @@
 import os
-import redis.asyncio as redis
-from typing import Optional
 
-_redis_client: Optional[redis.Redis] = None
+import redis.asyncio as redis
+
+_redis_client: redis.Redis | None = None
 
 
 async def get_redis_client() -> redis.Redis:

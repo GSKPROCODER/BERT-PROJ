@@ -1,17 +1,16 @@
 import logging
-from typing import Optional, Tuple
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch
+
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 logger = logging.getLogger(__name__)
 
 SENTIMENT_MODEL_NAME = "cardiffnlp/twitter-roberta-base-sentiment-latest"
 EMOTION_MODEL_NAME = "j-hartmann/emotion-english-distilroberta-base"
 
-_sentiment_tokenizer: Optional[AutoTokenizer] = None
-_sentiment_model: Optional[AutoModelForSequenceClassification] = None
-_emotion_tokenizer: Optional[AutoTokenizer] = None
-_emotion_model: Optional[AutoModelForSequenceClassification] = None
+_sentiment_tokenizer: AutoTokenizer | None = None
+_sentiment_model: AutoModelForSequenceClassification | None = None
+_emotion_tokenizer: AutoTokenizer | None = None
+_emotion_model: AutoModelForSequenceClassification | None = None
 
 
 def load_models() -> None:
@@ -38,14 +37,14 @@ def load_models() -> None:
         logger.info("Emotion model loaded successfully")
 
 
-def get_sentiment_model() -> Tuple[AutoTokenizer, AutoModelForSequenceClassification]:
+def get_sentiment_model() -> tuple[AutoTokenizer, AutoModelForSequenceClassification]:
     """Get the loaded sentiment tokenizer and model."""
     if _sentiment_tokenizer is None or _sentiment_model is None:
         raise RuntimeError("Sentiment model not loaded. Call load_models() first.")
     return _sentiment_tokenizer, _sentiment_model
 
 
-def get_emotion_model() -> Tuple[AutoTokenizer, AutoModelForSequenceClassification]:
+def get_emotion_model() -> tuple[AutoTokenizer, AutoModelForSequenceClassification]:
     """Get the loaded emotion tokenizer and model."""
     if _emotion_tokenizer is None or _emotion_model is None:
         raise RuntimeError("Emotion model not loaded. Call load_models() first.")

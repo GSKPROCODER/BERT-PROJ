@@ -1,19 +1,21 @@
-from fastapi import APIRouter, HTTPException, Depends
+import logging
+
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
+
 from app.models.schemas import (
-    SentimentRequest,
-    SentimentResponse,
-    EmotionRequest,
-    EmotionResponse,
+    AspectAnalysisResponse,
+    BulkAnalysisItem,
     BulkAnalysisRequest,
     BulkAnalysisResponse,
-    BulkAnalysisItem,
-    AspectAnalysisResponse,
+    EmotionRequest,
+    EmotionResponse,
+    SentimentRequest,
+    SentimentResponse,
 )
-from app.services.sentiment_service import get_sentiment_service
-from app.services.emotion_service import get_emotion_service
 from app.services.aspect_service import get_aspect_service
-import logging
+from app.services.emotion_service import get_emotion_service
+from app.services.sentiment_service import get_sentiment_service
 
 logger = logging.getLogger(__name__)
 

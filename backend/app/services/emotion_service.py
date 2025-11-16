@@ -1,11 +1,12 @@
-import logging
-from typing import Dict
-import torch
-import torch.nn.functional as F
-from app.models.model_loader import get_emotion_model
-from app.utils.redis_client import get_redis_client
 import hashlib
 import json
+import logging
+
+import torch
+import torch.nn.functional as F  # noqa: N812
+
+from app.models.model_loader import get_emotion_model
+from app.utils.redis_client import get_redis_client
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class EmotionService:
         text_hash = hashlib.sha256(text.encode()).hexdigest()
         return f"emotion:{text_hash}"
 
-    async def analyze(self, text: str) -> Dict[str, any]:
+    async def analyze(self, text: str) -> dict[str, any]:
         cache_key = self._get_cache_key(text)
         redis_client = await get_redis_client()
 
@@ -34,7 +35,7 @@ class EmotionService:
         await redis_client.setex(cache_key, 3600, json.dumps(result))
         return result
 
-    def _compute_emotion(self, text: str) -> Dict[str, any]:
+    def _compute_emotion(self, text: str) -> dict[str, any]:
         inputs = self.tokenizer(
             text, return_tensors="pt", truncation=True, max_length=512, padding=True
         )
