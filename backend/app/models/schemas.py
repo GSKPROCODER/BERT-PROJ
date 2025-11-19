@@ -12,6 +12,14 @@ class SentimentRequest(BaseModel):
         return v.strip()
 
 
+class RiskAnalysis(BaseModel):
+    has_risk: bool = Field(..., description="Whether any risk flags were detected")
+    risk_level: str = Field(..., description="Risk level: low, medium, or high")
+    risk_score: float = Field(..., description="Risk score from 0.0 to 1.0")
+    flags: list[str] = Field(..., description="List of detected risk flags")
+    recommendations: list[str] = Field(..., description="Recommended actions")
+
+
 class SentimentResponse(BaseModel):
     sentiment: str
     scores: dict[str, float] = Field(
@@ -20,6 +28,9 @@ class SentimentResponse(BaseModel):
     confidence: float = Field(..., description="Confidence score for the chosen sentiment")
     probabilities: dict[str, float] = Field(
         ..., description="Probability distribution over sentiment labels"
+    )
+    risk_analysis: RiskAnalysis | None = Field(
+        None, description="Risk analysis results (optional)"
     )
 
 

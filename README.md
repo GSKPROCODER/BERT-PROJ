@@ -21,6 +21,13 @@ Production-ready NLP sentiment analysis application using RoBERTa transformers, 
 - **Emotion Detection**: 7-emotion classification (joy, sadness, anger, fear, surprise, disgust, neutral)
 - **Aspect-Based Analysis**: Extract and analyze specific aspects from text
 - **Rhetorical Intent**: Detect claim, justification, critique, explanation, and evidence patterns
+- **Risk Detection**: Automated flagging of potentially harmful content
+  - Violence and threats
+  - Self-harm indicators
+  - Hate speech
+  - Extreme negativity
+  - Risk level assessment (low, medium, high)
+  - Actionable recommendations
 
 ### Advanced Insights
 - **Emotional Arc**: Visualize emotion intensity progression across sentences

@@ -42,6 +42,14 @@ export interface BulkAnalysisResponse {
   failed: number;
 }
 
+export interface RiskAnalysis {
+  has_risk: boolean;
+  risk_level: 'low' | 'medium' | 'high';
+  risk_score: number;
+  flags: string[];
+  recommendations: string[];
+}
+
 export interface SentimentResponse {
   sentiment: 'positive' | 'negative' | 'neutral';
   scores: {
@@ -49,6 +57,13 @@ export interface SentimentResponse {
     neutral: number;
     negative: number;
   };
+  confidence: number;
+  probabilities: {
+    positive: number;
+    neutral: number;
+    negative: number;
+  };
+  risk_analysis?: RiskAnalysis;
 }
 
 export interface EmotionResponse {

@@ -4,6 +4,7 @@ import type { ComprehensiveAnalysis } from '../types';
 import EmotionSpectrum from './EmotionSpectrum';
 import AspectSummary from './AspectSummary';
 import AdvancedInsightsPanel from './AdvancedInsightsPanel';
+import RiskAlert from './RiskAlert';
 import SDGExamplesToggle from './SDGExamplesToggle';
 
 interface AnalyzeSectionProps {
@@ -31,7 +32,7 @@ export default function AnalyzeSection({ onAnalysisComplete, onError }: AnalyzeS
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     const texts = parseInput(inputText);
-    
+
     if (texts.length === 0) {
       if (onError) onError('Please enter some text to analyze');
       return;
@@ -149,6 +150,11 @@ export default function AnalyzeSection({ onAnalysisComplete, onError }: AnalyzeS
 
       {analysis && (
         <div className="mt-8 space-y-6">
+          {/* Risk Alert - Full Width */}
+          {analysis.sentiment.risk_analysis && analysis.sentiment.risk_analysis.has_risk && (
+            <RiskAlert riskAnalysis={analysis.sentiment.risk_analysis} />
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left Column: Main Analysis */}
             <div className="space-y-6">

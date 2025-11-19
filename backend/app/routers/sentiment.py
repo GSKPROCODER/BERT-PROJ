@@ -15,6 +15,7 @@ from app.models.schemas import (
 )
 from app.services.aspect_service import get_aspect_service
 from app.services.emotion_service import get_emotion_service
+from app.services.risk_service import get_risk_service
 from app.services.sentiment_service import get_sentiment_service
 
 logger = logging.getLogger(__name__)
@@ -53,9 +54,20 @@ async def analyze_sentiment(
     rate_limiter: None = Depends(_rate_limit_10_60),
 ):
     try:
-        service = get_sentiment_service()
-        result = await service.analyze(request.text)
-        return SentimentResponse(**result)
+        sentiment_service = get_sentiment_service()
+        emotion_service = get_emotion_service()
+        risk_service = get_risk_service()
+
+        # Get sentiment and emotion
+        sentiment_result = await sentiment_service.analyze(request.text)
+        emotion_result = await emotion_service.analyze(request.text)
+
+        # Perform risk analysis
+        risk_analysis = risk_service.detect_risks(
+            request.text, sentiment_result["sentiment"], emotion_result["emotion"]
+        )
+
+        return SentimentResponse(**sentiment_result, risk_analysis=risk_analysis)
     except Exception as e:
         logger.error(f"Error analyzing sentiment: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Error analyzing sentiment: {str(e)}")
@@ -151,11 +163,22 @@ async def analyze(
     request: SentimentRequest,
     rate_limiter: None = Depends(_rate_limit_10_60),
 ):
-    """Compatibility endpoint: POST /api/analyze -> runs sentiment analysis."""
+    """Compatibility endpoint: POST /api/analyze -> runs sentiment analysis with risk detection."""
     try:
-        service = get_sentiment_service()
-        result = await service.analyze(request.text)
-        return SentimentResponse(**result)
+        sentiment_service = get_sentiment_service()
+        emotion_service = get_emotion_service()
+        risk_service = get_risk_service()
+
+        # Get sentiment and emotion
+        sentiment_result = await sentiment_service.analyze(request.text)
+        emotion_result = await emotion_service.analyze(request.text)
+
+        # Perform risk analysis
+        risk_analysis = risk_service.detect_risks(
+            request.text, sentiment_result["sentiment"], emotion_result["emotion"]
+        )
+
+        return SentimentResponse(**sentiment_result, risk_analysis=risk_analysis)
     except Exception as e:
         logger.error(f"Error analyzing sentiment: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Error analyzing sentiment: {str(e)}")
