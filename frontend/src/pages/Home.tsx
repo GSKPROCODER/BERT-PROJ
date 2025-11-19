@@ -1,176 +1,117 @@
 import { useState } from 'react';
-import SentimentForm from '../components/SentimentForm';
-import SentimentResult from '../components/SentimentResult';
-import ErrorDisplay from '../components/ErrorDisplay';
 import DarkModeToggle from '../components/DarkModeToggle';
-import TextExamples from '../components/TextExamples';
-import AnalysisHistory from '../components/AnalysisHistory';
-import Statistics from '../components/Statistics';
-import BatchAnalysis from '../components/BatchAnalysis';
-import BatchResults from '../components/BatchResults';
-import AspectAnalysis from '../components/AspectAnalysis';
-import AspectResults from '../components/AspectResults';
-import ExportButton from '../components/ExportButton';
+import AnalyzeSection from '../components/AnalyzeSection';
+import InsightsSection from '../components/InsightsSection';
+import About from './About';
+import ErrorDisplay from '../components/ErrorDisplay';
 import { useDarkMode } from '../hooks/useDarkMode';
 import { saveToHistory } from '../utils/storage';
-import type {
-  SentimentResponse,
-  BulkAnalysisResponse,
-  AspectAnalysisResponse,
-  AnalysisHistoryItem,
-} from '../types';
+import type { ComprehensiveAnalysis } from '../types';
+import type { AnalysisHistoryItem } from '../types';
 
 export default function Home(): JSX.Element {
   const [darkMode, toggleDarkMode] = useDarkMode();
-  const [result, setResult] = useState<SentimentResponse | null>(null);
-  const [batchResults, setBatchResults] = useState<BulkAnalysisResponse | null>(null);
-  const [aspectResults, setAspectResults] = useState<AspectAnalysisResponse | null>(null);
+  const [activeSection, setActiveSection] = useState<'analyze' | 'insights' | 'about'>('analyze');
+  const [currentAnalysis, setCurrentAnalysis] = useState<ComprehensiveAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [currentText, setCurrentText] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'single' | 'batch' | 'aspects'>('single');
 
-  const handleResult = (newResult: SentimentResponse, text: string): void => {
-    setResult(newResult);
-    setBatchResults(null);
+  const handleAnalysisComplete = (analysis: ComprehensiveAnalysis): void => {
+    setCurrentAnalysis(analysis);
     setError(null);
-    setCurrentText(text);
 
+    // Save to history
     const historyItem: AnalysisHistoryItem = {
       id: Date.now().toString(),
-      text,
-      result: newResult,
+      text: analysis.text,
+      result: analysis.sentiment,
       timestamp: Date.now(),
     };
     saveToHistory(historyItem);
   };
 
-  const handleBatchResults = (results: BulkAnalysisResponse): void => {
-    setBatchResults(results);
-    setResult(null);
-    setAspectResults(null);
-    setError(null);
-  };
-
-  const handleAspectResults = (results: AspectAnalysisResponse): void => {
-    setAspectResults(results);
-    setResult(null);
-    setBatchResults(null);
-    setError(null);
-  };
-
-  const handleError = (newError: string): void => {
-    setError(newError);
-    setResult(null);
-    setBatchResults(null);
-    setAspectResults(null);
+  const handleError = (errorMessage: string): void => {
+    setError(errorMessage);
   };
 
   const handleDismissError = (): void => {
     setError(null);
   };
 
-  const handleExampleSelect = (text: string): void => {
-    setCurrentText(text);
-  };
-
-  const handleHistorySelect = (item: AnalysisHistoryItem): void => {
-    setResult(item.result);
-    setCurrentText(item.text);
-    setBatchResults(null);
-    setAspectResults(null);
-    setError(null);
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4 transition-colors duration-300">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 transition-colors duration-300">
       <DarkModeToggle darkMode={darkMode} onToggle={toggleDarkMode} />
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
         <header className="text-center mb-8 animate-fade-in">
-          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Sentiment Analysis
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
-            Advanced NLP sentiment analysis powered by BERT
+          <p className="text-gray-400 text-lg">
+            Advanced NLP analysis powered by BERT & RoBERTa
           </p>
         </header>
 
-        <Statistics />
+        {/* Navigation */}
+        <nav className="flex justify-center gap-4 mb-8">
+          <button
+            onClick={() => setActiveSection('analyze')}
+            className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              activeSection === 'analyze'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            Analyze
+          </button>
+          <button
+            onClick={() => setActiveSection('insights')}
+            className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              activeSection === 'insights'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            Insights
+          </button>
+          <button
+            onClick={() => setActiveSection('about')}
+            className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              activeSection === 'about'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+            }`}
+          >
+            About
+          </button>
+        </nav>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-6 border border-gray-200 dark:border-gray-700 animate-slide-up">
-          <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
-            <button
-              onClick={() => setActiveTab('single')}
-              className={`px-6 py-2 font-medium transition-all ${
-                activeTab === 'single'
-                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              Single Analysis
-            </button>
-            <button
-              onClick={() => setActiveTab('batch')}
-              className={`px-6 py-2 font-medium transition-all ${
-                activeTab === 'batch'
-                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              Batch Analysis
-            </button>
-            <button
-              onClick={() => setActiveTab('aspects')}
-              className={`px-6 py-2 font-medium transition-all ${
-                activeTab === 'aspects'
-                  ? 'text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            >
-              Aspect Analysis
-            </button>
-          </div>
-
-          {activeTab === 'single' ? (
-            <>
-              <TextExamples onSelect={handleExampleSelect} />
-              <SentimentForm
-                onResult={(r) => {
-                  const textarea = document.getElementById('text-input') as HTMLTextAreaElement;
-                  const text = textarea?.value || currentText;
-                  handleResult(r, text);
-                }}
-                onError={handleError}
-                initialText={currentText}
-              />
-            </>
-          ) : activeTab === 'batch' ? (
-            <BatchAnalysis onResults={handleBatchResults} onError={handleError} />
-          ) : (
-            <AspectAnalysis onResult={handleAspectResults} onError={handleError} />
-          )}
-        </div>
-
+        {/* Error Display */}
         {error && <ErrorDisplay error={error} onDismiss={handleDismissError} />}
 
-        {result && (
-          <div className="mb-6">
-            <div className="flex justify-end mb-2">
-              <ExportButton result={result} text={currentText} />
+        {/* Content Sections */}
+        <main>
+          {activeSection === 'analyze' && (
+            <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700 animate-fade-in">
+              <AnalyzeSection
+                onAnalysisComplete={handleAnalysisComplete}
+                onError={handleError}
+              />
             </div>
-            <SentimentResult result={result} />
-          </div>
-        )}
+          )}
 
-        {batchResults && <BatchResults results={batchResults} />}
+          {activeSection === 'insights' && (
+            <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700 animate-fade-in">
+              <InsightsSection currentAnalysis={currentAnalysis} />
+            </div>
+          )}
 
-        {aspectResults && <AspectResults result={aspectResults} />}
-
-        <AnalysisHistory onSelect={handleHistorySelect} />
-
-        <div className="text-center mt-8">
-          <ExportButton />
-        </div>
+          {activeSection === 'about' && (
+            <div className="animate-fade-in">
+              <About />
+            </div>
+          )}
+        </main>
       </div>
     </div>
   );

@@ -39,4 +39,9 @@ README.md
 *.md
 .vscode
 .idea
+.cache/
+.cache/**
+*.cache
+huggingface/
+transformers_cache/
 

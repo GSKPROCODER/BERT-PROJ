@@ -2,7 +2,7 @@ import { getHistory } from '../utils/storage';
 import type { SentimentResponse } from '../types';
 
 interface ExportButtonProps {
-  result?: SentimentResponse;
+  result?: SentimentResponse | any;
   text?: string;
 }
 
@@ -51,6 +51,51 @@ export default function ExportButton({
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  const exportUnified = (): void => {
+    if (!result || !Array.isArray(result)) return;
+
+    const data = {
+      type: 'unified_analysis',
+      results: result,
+      timestamp: new Date().toISOString(),
+      total: result.length,
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `unified-analysis-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  if (result && Array.isArray(result)) {
+    return (
+      <button
+        onClick={exportUnified}
+        className="px-4 py-2 text-sm bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          />
+        </svg>
+        Export All Results ({result.length})
+      </button>
+    );
+  }
 
   if (result && text) {
     return (

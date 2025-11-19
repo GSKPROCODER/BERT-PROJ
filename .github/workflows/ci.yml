@@ -34,26 +34,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Lint with ruff
-        working-directory: ./backend
-        run: |
-          ruff check app
-
-      - name: Format check with black
-        working-directory: ./backend
-        run: |
-          black --check app
-
-      - name: Import sort check with isort
-        working-directory: ./backend
-        run: |
-          isort --check-only app
-
-      - name: Run tests
+      - name: Run code quality checks and tests
         working-directory: ./backend
         env:
           REDIS_URL: redis://localhost:6379
         run: |
+          echo "Running ruff linting..."
+          ruff check app
+          echo "Running black format check..."
+          black --check app
+          echo "Running isort import sort check..."
+          isort --check-only app
+          echo "Running pytest..."
           pytest
 
   frontend-tests:

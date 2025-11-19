@@ -1,0 +1,19 @@
+# Railway Configuration
+# This file provides default Railway deployment settings
+# See: https://docs.railway.com/reference/config-as-code
+#
+# Note: For multi-service deployments, Railway will auto-detect Dockerfiles
+# in each service directory. This file provides defaults but each service
+# can be configured individually in the Railway dashboard.
+
+# Default build configuration (Railway will auto-detect Dockerfile)
+[build]
+builder = "DOCKERFILE"
+
+# Default deploy configuration
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
