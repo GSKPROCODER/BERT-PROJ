@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getHistory } from '../utils/storage';
 import type { ComprehensiveAnalysis } from '../types';
+import SDGImpactReport from './SDGImpactReport';
 
 interface InsightsSectionProps {
   currentAnalysis: ComprehensiveAnalysis | null;
@@ -52,6 +53,16 @@ export default function InsightsSection({ currentAnalysis }: InsightsSectionProp
 
   return (
     <div className="space-y-6">
+      {/* SDG Impact Report */}
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h3 className="text-lg font-semibold text-white mb-4">SDG Impact Reporting</h3>
+        <p className="text-sm text-gray-300 mb-4">
+          Generate a comprehensive report demonstrating how this system supports UN Sustainable Development Goals 16 
+          (Peace, Justice and Strong Institutions) and 3 (Good Health and Well-being).
+        </p>
+        <SDGImpactReport currentAnalysis={currentAnalysis} />
+      </div>
+
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-gray-700 rounded-xl p-6 border border-gray-600 text-center">

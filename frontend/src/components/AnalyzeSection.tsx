@@ -4,6 +4,7 @@ import type { ComprehensiveAnalysis } from '../types';
 import EmotionSpectrum from './EmotionSpectrum';
 import AspectSummary from './AspectSummary';
 import AdvancedInsightsPanel from './AdvancedInsightsPanel';
+import SDGExamplesToggle from './SDGExamplesToggle';
 
 interface AnalyzeSectionProps {
   onAnalysisComplete: (analysis: ComprehensiveAnalysis) => void;
@@ -103,6 +104,7 @@ export default function AnalyzeSection({ onAnalysisComplete, onError }: AnalyzeS
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit} className="space-y-4">
+        <SDGExamplesToggle onSelectExample={(text) => setInputText(text)} />
         <div>
           <label htmlFor="analysis-input" className="block text-sm font-medium text-gray-300 mb-2">
             Enter text to analyze (supports single text or multiple separated by semicolons, commas, or newlines):

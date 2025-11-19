@@ -3,12 +3,15 @@
 # See: https://docs.railway.com/reference/config-as-code
 #
 # Note: For multi-service deployments, Railway will auto-detect Dockerfiles
-# in each service directory. This file provides defaults but each service
-# can be configured individually in the Railway dashboard.
+# in each service directory (backend/Dockerfile and frontend/Dockerfile).
+# A root Dockerfile is also provided as a fallback for monorepo deployments.
+# Each service can be configured individually in the Railway dashboard.
 
 # Default build configuration (Railway will auto-detect Dockerfile)
 [build]
 builder = "DOCKERFILE"
+# Railway will use service-specific Dockerfiles when root directory is set
+# Root Dockerfile is available as fallback
 
 # Default deploy configuration
 [deploy]

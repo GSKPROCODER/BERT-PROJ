@@ -1,3 +1,5 @@
+import RealWorldImpact from '../components/RealWorldImpact';
+
 export default function About(): JSX.Element {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
@@ -194,6 +196,14 @@ export default function About(): JSX.Element {
               <strong>Rate Limiting:</strong> 10 requests per minute per endpoint
             </div>
           </div>
+        </section>
+
+        {/* Real-World Impact */}
+        <section className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+          <h2 className="text-2xl font-bold text-white mb-4">
+            🌍 Real-World Impact
+          </h2>
+          <RealWorldImpact />
         </section>
       </div>
     </div>
