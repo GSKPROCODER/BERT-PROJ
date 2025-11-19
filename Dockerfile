@@ -1,9 +1,9 @@
 # Root Dockerfile for Railway Deployment
-# This file serves as a fallback for Railway when deploying the entire monorepo
-# Railway will typically use service-specific Dockerfiles in backend/ and frontend/
-# This file is provided for compatibility with Railway's auto-detection
+# Backend-first build strategy
 
-# Default to backend service
+# ============================
+# BUILDER IMAGE
+# ============================
 FROM python:3.11-slim AS builder
 
 WORKDIR /app
@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy backend requirements
+# Install backend dependencies
 COPY backend/requirements-prod.txt ./requirements-prod.txt
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements-prod.txt \
@@ -21,18 +21,24 @@ RUN pip install --no-cache-dir --upgrade pip \
     && find /usr/local -depth \( -type d -a -name __pycache__ -o -name test -o -name tests \) -exec rm -rf '{}' + 2>/dev/null || true \
     && rm -rf /root/.cache/pip
 
+
+# ============================
+# RUNTIME IMAGE
+# ============================
 FROM python:3.11-slim
 
 WORKDIR /app
 
 COPY --from=builder /usr/local /usr/local
-RUN apt-get update && apt-get install -y ca-certificates curl \
+
+RUN apt-get update && apt-get install -y \
+    ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy backend code
+# Copy backend source code
 COPY backend/ .
 
-# Create a non-root user for running the app
+# Create non-root user
 RUN groupadd -r app && useradd -r -g app -d /app -s /sbin/nologin app \
     && chown -R app:app /app
 
@@ -40,14 +46,21 @@ ENV PATH=/usr/local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
 ENV GUNICORN_WORKERS=2
 
+# Expose default port (Railway overrides this)
 EXPOSE 8000
 
-# Switch to non-root user
 USER app
 
-# Use Gunicorn with Uvicorn workers for production
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-c", "gunicorn_conf.py", "app.main:app"]
+# ============================
+# FIXED PRODUCTION CMD
+# ============================
+# Your backend is copied as flat files into /app/
+# And your FastAPI entry is inside main.py as app = FastAPI()
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-c", "gunicorn_conf.py", "main:app"]
 
-# Docker healthcheck (uses PORT env var if set, otherwise defaults to 8000)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 CMD sh -c 'PORT=${PORT:-8000} && curl -f http://127.0.0.1:${PORT}/health || exit 1'
 
+# ============================
+# HEALTHCHECK
+# ============================
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+    CMD sh -c 'PORT=${PORT:-8000} && curl -f http://127.0.0.1:${PORT}/health || exit 1'
