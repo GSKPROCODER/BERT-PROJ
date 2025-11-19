@@ -3,7 +3,7 @@ uvicorn[standard]==0.24.0
 pydantic==2.5.0
 pydantic-settings==2.1.0
 transformers==4.35.2
-torch==2.1.1
+torch==2.1.1+cpu
 numpy<2.0.0
 redis==5.0.1
 fastapi-limiter==0.1.6
