@@ -33,12 +33,15 @@ export default function RiskAlert({ riskAnalysis }: RiskAlertProps): JSX.Element
 
     const getFlagLabel = (flag: string): string => {
         const labels: Record<string, string> = {
-            violence: 'Violence',
-            self_harm: 'Self-Harm',
-            hate_speech: 'Hate Speech',
+            violence_escalation: 'Violence/Conflict Escalation (SDG 16)',
+            self_harm: 'Self-Harm Risk (Critical)',
+            cyberbullying: 'Cyberbullying/Harassment (SDG 16)',
+            mental_health_distress: 'Mental Health Distress (SDG 3)',
             extreme_negativity: 'Extreme Negativity',
+            violence: 'Violence',
+            hate_speech: 'Hate Speech',
         };
-        return labels[flag] || flag;
+        return labels[flag] || flag.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     };
 
     return (

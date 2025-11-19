@@ -58,13 +58,16 @@ async def analyze_sentiment(
         emotion_service = get_emotion_service()
         risk_service = get_risk_service()
 
-        # Get sentiment and emotion
+        # Get sentiment and emotion from BERT models
         sentiment_result = await sentiment_service.analyze(request.text)
         emotion_result = await emotion_service.analyze(request.text)
 
-        # Perform risk analysis
+        # Perform risk analysis using BERT outputs + pattern matching
         risk_analysis = risk_service.detect_risks(
-            request.text, sentiment_result["sentiment"], emotion_result["emotion"]
+            request.text,
+            sentiment_result["sentiment"],
+            emotion_result["emotion"],
+            sentiment_result.get("scores", {}),
         )
 
         return SentimentResponse(**sentiment_result, risk_analysis=risk_analysis)
@@ -169,13 +172,16 @@ async def analyze(
         emotion_service = get_emotion_service()
         risk_service = get_risk_service()
 
-        # Get sentiment and emotion
+        # Get sentiment and emotion from BERT models
         sentiment_result = await sentiment_service.analyze(request.text)
         emotion_result = await emotion_service.analyze(request.text)
 
-        # Perform risk analysis
+        # Perform risk analysis using BERT outputs + pattern matching
         risk_analysis = risk_service.detect_risks(
-            request.text, sentiment_result["sentiment"], emotion_result["emotion"]
+            request.text,
+            sentiment_result["sentiment"],
+            emotion_result["emotion"],
+            sentiment_result.get("scores", {}),
         )
 
         return SentimentResponse(**sentiment_result, risk_analysis=risk_analysis)
