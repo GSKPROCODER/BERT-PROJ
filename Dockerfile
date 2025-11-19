@@ -54,9 +54,9 @@ USER app
 # ============================
 # FIXED PRODUCTION CMD
 # ============================
-# Your backend is copied as flat files into /app/
-# And your FastAPI entry is inside main.py as app = FastAPI()
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-c", "gunicorn_conf.py", "main:app"]
+# Backend structure: /app/app/main.py (backend/ copied to /app/)
+# FastAPI app instance: app.main:app
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-c", "gunicorn_conf.py", "app.main:app"]
 
 
 # ============================
