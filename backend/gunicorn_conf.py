@@ -1,5 +1,5 @@
-import os
 import multiprocessing
+import os
 
 # Gunicorn configuration for production
 # Auto-detect optimal worker count for I/O-bound FastAPI applications

@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_health_check(client):
     response = client.get("/health")
     assert response.status_code == 200
@@ -45,4 +42,3 @@ def test_analyze_sentiment_whitespace_only(client):
 def test_analyze_sentiment_missing_field(client):
     response = client.post("/api/analyze", json={})
     assert response.status_code == 422
-

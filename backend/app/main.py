@@ -16,8 +16,9 @@ setup_logging()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     import logging
+
     logger = logging.getLogger(__name__)
-    
+
     # Load models with error handling - don't block startup
     try:
         logger.info("Starting model loading...")
@@ -26,13 +27,13 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Failed to load models during startup: {e}")
         logger.warning("App will start but model endpoints may fail until models are loaded")
-    
+
     # Ensure spaCy model is loaded at startup so readiness is verified early
     try:
         get_nlp_model()
     except Exception as e:
         logger.warning(f"Failed to load spaCy model: {e}")
-    
+
     # Initialize Redis and rate limiter with graceful fallback
     try:
         redis_client = await get_redis_client()
@@ -40,9 +41,9 @@ async def lifespan(app: FastAPI):
         logger.info("Redis and rate limiter initialized")
     except Exception as e:
         logger.warning(f"Failed to initialize Redis/rate limiter: {e}. Rate limiting disabled.")
-    
+
     yield
-    
+
     # Cleanup
     try:
         await FastAPILimiter.close()
@@ -77,12 +78,9 @@ async def health_check():
 @app.get("/readiness")
 async def readiness_check():
     """Readiness check - verifies models and dependencies are loaded."""
-    from app.models.model_loader import (
-        _sentiment_model,
-        _emotion_model,
-    )
-    
+    from app.models.model_loader import _emotion_model, _sentiment_model
+
     if _sentiment_model is None or _emotion_model is None:
         return {"status": "not_ready", "reason": "models_loading"}
-    
+
     return {"status": "ready"}
