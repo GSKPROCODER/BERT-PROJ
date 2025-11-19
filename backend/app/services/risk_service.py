@@ -12,34 +12,94 @@ class RiskDetectionService:
 
     def __init__(self):
         """Initialize risk detection patterns."""
-        # Violence and threat patterns
+        # Violence and threat patterns (SDG 16: Peace & Conflict)
         self.violence_patterns = [
+            # Direct violence
             r"\b(kill|murder|attack|assault|harm|hurt|destroy|weapon|gun|knife|bomb)\b",
             r"\b(violence|violent|threat|threaten|danger|dangerous)\b",
-            r"\b(fight|punch|shoot|stab|beat|hit)\b",
+            r"\b(fight|punch|shoot|stab|beat|hit|strike|smash)\b",
+            # Escalation and conflict
+            r"\b(take to the streets|fight back|rise up|take action|retaliate)\b",
+            r"\b(push.*back|stand.*ground|won'?t back down|ready to fight)\b",
+            r"\b(war|battle|combat|conflict|clash|confrontation)\b",
+            r"\b(riot|uprising|revolt|rebellion|resistance)\b",
+            # Threats and intimidation
+            r"\b(watch out|you'?ll pay|regret|consequences|teach.*lesson)\b",
+            r"\b(come after|get you|find you|hunt.*down)\b",
+            r"\b(blood|bleed|suffer|pain|torture)\b",
+            # Mobilization language
+            r"\b(rally|mobilize|organize|march|protest violently)\b",
+            r"\b(arm ourselves|prepare for|gear up|ready for war)\b",
+            r"\b(enough is enough|last straw|breaking point|no more)\b",
+            # Dehumanization
+            r"\b(scum|vermin|trash|garbage|animals|beasts)\b",
+            r"\b(eliminate|eradicate|purge|cleanse|remove)\b",
         ]
 
-        # Self-harm patterns
+        # Self-harm patterns (CRITICAL - Highest Priority)
         self.self_harm_patterns = [
+            # Direct self-harm
             r"\b(suicide|suicidal|self-harm|self harm|end my life|want to die|don'?t want to live)\b",
-            r"\b(cut myself|hurt myself|kill myself|end it all)\b",
-            r"\b(better off dead|no reason to live|can'?t go on)\b",
+            r"\b(cut myself|hurt myself|kill myself|end it all|take my life)\b",
+            r"\b(better off dead|no reason to live|can'?t go on|can'?t continue)\b",
+            # Suicidal ideation
+            r"\b(plan.*suicide|how to.*die|ways to.*kill|end.*pain)\b",
+            r"\b(goodbye.*world|final.*message|last.*time|won'?t be here)\b",
+            r"\b(ready to.*die|prepared to.*end|time to.*go)\b",
+            # Hopelessness about future
+            r"\b(no future|no tomorrow|no way out|trapped|escape.*pain)\b",
+            r"\b(can'?t see.*way|no hope left|nothing left)\b",
+            # Self-injury
+            r"\b(cut|cutting|burn|burning|harm|hurt).*myself\b",
+            r"\b(self.*injur|self.*destruct|self.*mutilat)\b",
         ]
 
-        # Hate speech and bullying patterns
+        # Hate speech and bullying patterns (SDG 16: Online Abuse)
         self.hate_patterns = [
-            r"\b(hate|hatred|racist|racism|sexist|sexism)\b",
-            r"\b(discriminat|bigot|prejudice)\b",
-            r"\b(you'?re worthless|nobody cares|you'?re useless)\b",
-            r"\b(kill yourself|go die|should die)\b",
+            # Direct hate speech
+            r"\b(hate|hatred|racist|racism|sexist|sexism|homophob|transphob)\b",
+            r"\b(discriminat|bigot|prejudice|intoleran)\b",
+            # Personal attacks and bullying
+            r"\b(you'?re worthless|nobody cares|you'?re useless|you'?re pathetic)\b",
+            r"\b(loser|failure|idiot|stupid|dumb|moron|retard)\b",
+            r"\b(ugly|disgusting|repulsive|revolting)\b",
+            r"\b(waste of space|burden|mistake|shouldn'?t exist)\b",
+            # Severe bullying
+            r"\b(kill yourself|go die|should die|end yourself)\b",
+            r"\b(no one likes you|everyone hates you|alone forever)\b",
+            r"\b(embarrassment|shame|humiliat|degrad)\b",
+            # Exclusion and isolation
+            r"\b(don'?t belong|not wanted|get out|go away forever)\b",
+            r"\b(nobody wants you|reject|outcast)\b",
+            # Mockery and ridicule
+            r"\b(laugh.*at you|joke|pathetic excuse|laughingstock)\b",
+            r"\b(can'?t do anything right|always fail|total failure)\b",
         ]
 
-        # Depression and mental health indicators
+        # Depression and mental health indicators (SDG 3: Mental Health)
         self.depression_patterns = [
+            # Hopelessness and despair
             r"\b(nothing matters|can'?t focus|exhausted all the time)\b",
-            r"\b(no point|give up|giving up|lost hope)\b",
-            r"\b(empty inside|numb|can'?t feel)\b",
+            r"\b(no point|give up|giving up|lost hope|hopeless)\b",
+            r"\b(empty inside|numb|can'?t feel|feel nothing)\b",
             r"\b(don'?t care anymore|why bother|what'?s the point)\b",
+            # Withdrawal and isolation
+            r"\b(alone|lonely|isolated|no one understands)\b",
+            r"\b(can'?t connect|distant|detached|withdrawn)\b",
+            r"\b(avoid.*people|stay.*alone|hide away)\b",
+            # Fatigue and exhaustion
+            r"\b(too tired|no energy|can'?t get up|exhausted)\b",
+            r"\b(sleep all day|can'?t sleep|insomnia)\b",
+            r"\b(drained|burnt out|can'?t function)\b",
+            # Loss of interest
+            r"\b(nothing.*fun|no joy|can'?t enjoy|lost interest)\b",
+            r"\b(don'?t want.*anything|stopped caring|gave up trying)\b",
+            # Cognitive symptoms
+            r"\b(can'?t think|brain fog|can'?t concentrate|memory.*bad)\b",
+            r"\b(confused|overwhelmed|can'?t cope|falling apart)\b",
+            # Negative self-perception
+            r"\b(burden.*others|better off without me|drag.*down)\b",
+            r"\b(failed.*everyone|let.*down|disappointed)\b",
         ]
 
         # Extreme negativity patterns
