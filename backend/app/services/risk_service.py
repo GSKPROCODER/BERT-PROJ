@@ -74,9 +74,7 @@ class RiskDetectionService:
 
         # Check for self-harm
         self_harm_matches = sum(
-            1
-            for pattern in self.compiled_patterns["self_harm"]
-            if pattern.search(text_lower)
+            1 for pattern in self.compiled_patterns["self_harm"] if pattern.search(text_lower)
         )
         if self_harm_matches > 0:
             flags.append("self_harm")
@@ -131,7 +129,9 @@ class RiskDetectionService:
         recommendations = []
 
         if "self_harm" in flags:
-            recommendations.append("Content contains self-harm indicators - requires immediate review")
+            recommendations.append(
+                "Content contains self-harm indicators - requires immediate review"
+            )
             recommendations.append("Consider connecting user with mental health resources")
 
         if "violence" in flags:

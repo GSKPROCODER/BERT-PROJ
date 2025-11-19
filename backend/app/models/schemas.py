@@ -29,9 +29,7 @@ class SentimentResponse(BaseModel):
     probabilities: dict[str, float] = Field(
         ..., description="Probability distribution over sentiment labels"
     )
-    risk_analysis: RiskAnalysis | None = Field(
-        None, description="Risk analysis results (optional)"
-    )
+    risk_analysis: RiskAnalysis | None = Field(None, description="Risk analysis results (optional)")
 
 
 class EmotionRequest(BaseModel):
