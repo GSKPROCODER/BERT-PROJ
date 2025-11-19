@@ -70,3 +70,18 @@ Thumbs.db
 *.log
 logs/
 
+# ML Model caches
+.cache/
+.local/
+transformers_cache/
+huggingface/
+*.onnx
+*.pt
+*.pth
+
+# Docker
+.dockerignore.bak
+
+# Test files
+test-paragraph.txt
+

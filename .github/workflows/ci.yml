@@ -28,11 +28,27 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache Hugging Face models
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/huggingface
+          key: ${{ runner.os }}-huggingface-models
+          restore-keys: |
+            ${{ runner.os }}-huggingface-
+
+      - name: Install dependencies (CPU-only PyTorch)
         working-directory: ./backend
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
 
       - name: Run code quality checks and tests
         working-directory: ./backend

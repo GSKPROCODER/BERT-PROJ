@@ -2,7 +2,7 @@ import { getHistory } from '../utils/storage';
 import type { SentimentResponse } from '../types';
 
 interface ExportButtonProps {
-  result?: SentimentResponse | any;
+  result?: SentimentResponse;
   text?: string;
 }
 

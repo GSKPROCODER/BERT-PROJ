@@ -17,7 +17,7 @@ interface SDGExample {
   };
   visualizations: {
     type: 'heatmap' | 'bar' | 'radar';
-    data: any;
+    data: Record<string, unknown>;
   }[];
 }
 
@@ -142,8 +142,8 @@ export default function RealWorldImpact(): JSX.Element {
       {/* Disclaimer Banner */}
       <div className="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4">
         <p className="text-sm text-yellow-200 leading-relaxed">
-          <strong>Important Disclaimer:</strong> This system is not a replacement for clinical or legal evaluation. 
-          It provides automated early-signal detection to support human decision-makers. All flagged content should 
+          <strong>Important Disclaimer:</strong> This system is not a replacement for clinical or legal evaluation.
+          It provides automated early-signal detection to support human decision-makers. All flagged content should
           be reviewed by qualified professionals.
         </p>
       </div>
@@ -189,11 +189,10 @@ export default function RealWorldImpact(): JSX.Element {
                     <div className="space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Sentiment:</span>
-                        <span className={`font-medium capitalize ${
-                          example.predictions.sentiment === 'negative' ? 'text-red-400' :
-                          example.predictions.sentiment === 'positive' ? 'text-green-400' :
-                          'text-gray-400'
-                        }`}>
+                        <span className={`font-medium capitalize ${example.predictions.sentiment === 'negative' ? 'text-red-400' :
+                            example.predictions.sentiment === 'positive' ? 'text-green-400' :
+                              'text-gray-400'
+                          }`}>
                           {example.predictions.sentiment}
                         </span>
                       </div>
@@ -274,25 +273,25 @@ export default function RealWorldImpact(): JSX.Element {
           <div>
             <h4 className="font-semibold text-white mb-2">Batch Processing for Social Media Monitoring</h4>
             <p>
-              Process thousands of social media posts simultaneously to detect emerging conflict patterns, 
-              identify coordinated harassment campaigns, or monitor public sentiment trends. The system can 
+              Process thousands of social media posts simultaneously to detect emerging conflict patterns,
+              identify coordinated harassment campaigns, or monitor public sentiment trends. The system can
               analyze large datasets to provide aggregate insights and flag high-priority content for human review.
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-white mb-2">Sentiment Trend Analysis</h4>
             <p>
-              Track sentiment and emotional patterns over time to detect rising tensions, mental health 
-              crises, or community distress. By analyzing temporal trends, institutions can identify early 
+              Track sentiment and emotional patterns over time to detect rising tensions, mental health
+              crises, or community distress. By analyzing temporal trends, institutions can identify early
               warning signals and allocate resources proactively.
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-white mb-2">Advanced Emotional Spectrum Analysis</h4>
             <p>
-              The system's multi-dimensional emotion analysis helps identify subtle patterns that simple 
-              sentiment classification might miss. For example, the combination of high disgust and sadness 
-              may indicate psychological abuse, while anger combined with escalation rhetoric may signal 
+              The system's multi-dimensional emotion analysis helps identify subtle patterns that simple
+              sentiment classification might miss. For example, the combination of high disgust and sadness
+              may indicate psychological abuse, while anger combined with escalation rhetoric may signal
               potential violence.
             </p>
           </div>

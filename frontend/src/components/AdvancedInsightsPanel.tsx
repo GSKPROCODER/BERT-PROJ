@@ -27,18 +27,22 @@ export default function AdvancedInsightsPanel({
 
   // Derive rhetorical intent (heuristic-based)
   const lowerText = text.toLowerCase();
+  const words = lowerText.split(/\s+/).length;
+
   const rhetoricalIntent = {
-    claim: (lowerText.match(/\b(is|are|was|were|should|must|will|can)\b/g) || []).length / Math.max(1, sentences.length),
-    justification: (lowerText.match(/\b(because|since|due to|as a result|therefore)\b/g) || []).length / Math.max(1, sentences.length),
-    critique: (lowerText.match(/\b(but|however|although|despite|unfortunately)\b/g) || []).length / Math.max(1, sentences.length),
-    explanation: (lowerText.match(/\b(for example|such as|including|specifically)\b/g) || []).length / Math.max(1, sentences.length),
-    evidence: (lowerText.match(/\b(shows|proves|indicates|demonstrates|suggests)\b/g) || []).length / Math.max(1, sentences.length),
+    claim: (lowerText.match(/\b(is|are|was|were|should|must|will|can|would|could|may|might|need|needs|believe|think|feel|assert|state|declare)\b/g) || []).length,
+    justification: (lowerText.match(/\b(because|since|due to|as a result|therefore|thus|hence|consequently|so|given that|considering|as|for this reason)\b/g) || []).length,
+    critique: (lowerText.match(/\b(but|however|although|despite|unfortunately|yet|nevertheless|nonetheless|still|though|even though|while|whereas)\b/g) || []).length,
+    explanation: (lowerText.match(/\b(for example|such as|including|specifically|namely|that is|i\.e\.|e\.g\.|like|means|refers to|in other words)\b/g) || []).length,
+    evidence: (lowerText.match(/\b(shows|proves|indicates|demonstrates|suggests|reveals|confirms|supports|according to|research|study|data|found|observed)\b/g) || []).length,
   };
 
-  // Normalize rhetorical intent
-  const maxIntent = Math.max(...Object.values(rhetoricalIntent));
+  // Normalize rhetorical intent (scale to 0-1 based on text length)
   const normalizedIntent = Object.fromEntries(
-    Object.entries(rhetoricalIntent).map(([key, value]) => [key, maxIntent > 0 ? value / maxIntent : 0])
+    Object.entries(rhetoricalIntent).map(([key, value]) => [
+      key,
+      Math.min(1, value / Math.max(1, words * 0.1)) // Scale based on word count
+    ])
   );
 
   // Confidence explanation

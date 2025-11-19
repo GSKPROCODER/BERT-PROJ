@@ -55,7 +55,7 @@ export default function SDGExamplesToggle({ onSelectExample }: SDGExamplesToggle
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-semibold text-blue-400">
                   {example.category === 'peace-conflict' ? 'SDG 16' :
-                   example.category === 'online-abuse' ? 'SDG 16' : 'SDG 3'}
+                    example.category === 'online-abuse' ? 'SDG 16' : 'SDG 3'}
                 </span>
                 <span className="text-sm font-medium text-white">{example.label}</span>
               </div>
@@ -67,6 +67,4 @@ export default function SDGExamplesToggle({ onSelectExample }: SDGExamplesToggle
     </div>
   );
 }
-
-export { sdgExamples };
 

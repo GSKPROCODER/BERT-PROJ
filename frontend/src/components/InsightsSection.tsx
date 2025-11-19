@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getHistory } from '../utils/storage';
-import type { ComprehensiveAnalysis } from '../types';
+import type { ComprehensiveAnalysis, AnalysisHistoryItem } from '../types';
 import SDGImpactReport from './SDGImpactReport';
 
 interface InsightsSectionProps {
@@ -8,7 +8,7 @@ interface InsightsSectionProps {
 }
 
 export default function InsightsSection({ currentAnalysis }: InsightsSectionProps): JSX.Element {
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<AnalysisHistoryItem[]>([]);
 
   useEffect(() => {
     const loadHistory = (): void => {
@@ -31,13 +31,13 @@ export default function InsightsSection({ currentAnalysis }: InsightsSectionProp
     },
     avgConfidence: history.length > 0
       ? history.reduce((sum, h) => {
-          const conf = Math.max(
-            h.result?.scores?.positive || 0,
-            h.result?.scores?.neutral || 0,
-            h.result?.scores?.negative || 0
-          );
-          return sum + conf;
-        }, 0) / history.length
+        const conf = Math.max(
+          h.result?.scores?.positive || 0,
+          h.result?.scores?.neutral || 0,
+          h.result?.scores?.negative || 0
+        );
+        return sum + conf;
+      }, 0) / history.length
       : 0,
     recentAnalyses: history.slice(-5).reverse(),
   };
@@ -57,7 +57,7 @@ export default function InsightsSection({ currentAnalysis }: InsightsSectionProp
       <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
         <h3 className="text-lg font-semibold text-white mb-4">SDG Impact Reporting</h3>
         <p className="text-sm text-gray-300 mb-4">
-          Generate a comprehensive report demonstrating how this system supports UN Sustainable Development Goals 16 
+          Generate a comprehensive report demonstrating how this system supports UN Sustainable Development Goals 16
           (Peace, Justice and Strong Institutions) and 3 (Good Health and Well-being).
         </p>
         <SDGImpactReport currentAnalysis={currentAnalysis} />
