@@ -62,6 +62,7 @@ CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-c", "gunicorn_conf.py"
 # ============================
 # HEALTHCHECK
 # ============================
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+# Longer start-period to allow model loading (can take 60-120s on first start)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
     CMD sh -c 'PORT=${PORT:-8000} && curl -f http://127.0.0.1:${PORT}/health || exit 1'
 # End of Dockerfile

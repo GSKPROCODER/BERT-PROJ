@@ -12,28 +12,42 @@ from app.utils.redis_client import get_redis_client
 
 setup_logging()
 
-# Load models at import time to ensure TestClient and other import-time usages
-# have models available even if the lifespan startup hook isn't executed yet.
-try:
-    load_models()
-except Exception:
-    # If loading at import time fails (e.g. in constrained CI), defer to lifespan startup
-    pass
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    load_models()
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    # Load models with error handling - don't block startup
+    try:
+        logger.info("Starting model loading...")
+        load_models()
+        logger.info("Models loaded successfully")
+    except Exception as e:
+        logger.error(f"Failed to load models during startup: {e}")
+        logger.warning("App will start but model endpoints may fail until models are loaded")
+    
     # Ensure spaCy model is loaded at startup so readiness is verified early
     try:
         get_nlp_model()
-    except Exception:
-        # get_nlp_model logs errors; allow startup to continue but it will fall back later
-        pass
-    redis_client = await get_redis_client()
-    await FastAPILimiter.init(redis_client)
+    except Exception as e:
+        logger.warning(f"Failed to load spaCy model: {e}")
+    
+    # Initialize Redis and rate limiter with graceful fallback
+    try:
+        redis_client = await get_redis_client()
+        await FastAPILimiter.init(redis_client)
+        logger.info("Redis and rate limiter initialized")
+    except Exception as e:
+        logger.warning(f"Failed to initialize Redis/rate limiter: {e}. Rate limiting disabled.")
+    
     yield
-    await FastAPILimiter.close()
+    
+    # Cleanup
+    try:
+        await FastAPILimiter.close()
+    except Exception:
+        pass
 
 
 app = FastAPI(
@@ -56,4 +70,19 @@ app.include_router(sentiment.router, prefix="/api", tags=["sentiment"])
 
 @app.get("/health")
 async def health_check():
+    """Health check endpoint - always returns healthy if app is running."""
     return {"status": "healthy"}
+
+
+@app.get("/readiness")
+async def readiness_check():
+    """Readiness check - verifies models and dependencies are loaded."""
+    from app.models.model_loader import (
+        _sentiment_model,
+        _emotion_model,
+    )
+    
+    if _sentiment_model is None or _emotion_model is None:
+        return {"status": "not_ready", "reason": "models_loading"}
+    
+    return {"status": "ready"}

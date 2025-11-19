@@ -14,8 +14,8 @@ port = os.environ.get("PORT", os.environ.get("GUNICORN_PORT", "8000"))
 bind = os.environ.get("GUNICORN_BIND", f"0.0.0.0:{port}")
 
 worker_class = "uvicorn.workers.UvicornWorker"
-preload_app = True
-timeout = 120
+preload_app = False  # Disable preload to avoid blocking startup with model loading
+timeout = 300  # Increased timeout for model loading
 
 # Logging to stdout/stderr so containers capture logs
 accesslog = "-"
