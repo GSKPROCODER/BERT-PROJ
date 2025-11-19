@@ -28,6 +28,8 @@ export const analyzeSentiment = async (
     const response = await api.post<SentimentResponse>('/analysis/sentiment', {
       text,
     } as SentimentRequest);
+    console.log('Sentiment API Response:', response.data);
+    console.log('Risk Analysis:', response.data.risk_analysis);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
