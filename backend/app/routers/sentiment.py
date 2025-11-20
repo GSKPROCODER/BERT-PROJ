@@ -70,7 +70,10 @@ async def analyze_sentiment(
             sentiment_result.get("scores", {}),
         )
 
-        return SentimentResponse(**sentiment_result, risk_analysis=risk_analysis)
+        logger.info(f"Risk analysis for text '{request.text[:50]}...': {risk_analysis}")
+        response = SentimentResponse(**sentiment_result, risk_analysis=risk_analysis)
+        logger.info(f"Response includes risk_analysis: {response.risk_analysis is not None}")
+        return response
     except Exception as e:
         logger.error(f"Error analyzing sentiment: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Error analyzing sentiment: {str(e)}")

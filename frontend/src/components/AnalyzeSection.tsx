@@ -151,7 +151,14 @@ export default function AnalyzeSection({ onAnalysisComplete, onError }: AnalyzeS
       {analysis && (
         <div className="mt-8 space-y-6">
           {/* Risk Alert - Full Width */}
-          {analysis.sentiment.risk_analysis && analysis.sentiment.risk_analysis.has_risk && (
+          {(() => {
+            console.log('Analysis object:', analysis);
+            console.log('Sentiment object:', analysis.sentiment);
+            console.log('Risk analysis:', analysis.sentiment?.risk_analysis);
+            console.log('Has risk:', analysis.sentiment?.risk_analysis?.has_risk);
+            return null;
+          })()}
+          {analysis.sentiment?.risk_analysis?.has_risk && (
             <RiskAlert riskAnalysis={analysis.sentiment.risk_analysis} />
           )}
 
