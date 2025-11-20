@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter import FastAPILimiter
 
 from app.models.model_loader import load_models
-from app.routers import sentiment
+from app.routers import sentiment, url_fetch
 from app.services.aspect_service import get_nlp_model
 from app.utils.logging_config import setup_logging
 from app.utils.redis_client import get_redis_client
@@ -67,6 +67,7 @@ app.add_middleware(
 )
 
 app.include_router(sentiment.router, prefix="/api", tags=["sentiment"])
+app.include_router(url_fetch.router, prefix="/api", tags=["url"])
 
 
 @app.get("/health")

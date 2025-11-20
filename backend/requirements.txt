@@ -16,8 +16,9 @@ spacy==3.7.2
 redis==5.0.1
 fastapi-limiter==0.1.6
 
-# HTTP Client
+# HTTP Client & HTML Parsing
 httpx==0.25.2
+beautifulsoup4==4.12.2
 
 # Production Server
 gunicorn==20.1.0
