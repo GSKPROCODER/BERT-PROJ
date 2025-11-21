@@ -371,7 +371,9 @@ class RiskDetectionService:
             recommendations.append(
                 "CRITICAL: War/military conflict indicators - requires security assessment"
             )
-            recommendations.append("Monitor for escalation and coordinate with conflict prevention teams")
+            recommendations.append(
+                "Monitor for escalation and coordinate with conflict prevention teams"
+            )
             recommendations.append("SDG 16: Peace, justice and strong institutions")
 
         if "terrorism_extremism" in flags:
@@ -397,8 +399,12 @@ class RiskDetectionService:
             recommendations.append("SDG 3: Mental health intervention needed")
 
         if "violence_threat" in flags:
-            recommendations.append("Violence/threat language detected - assess for immediate danger")
-            recommendations.append("Consider safety measures and law enforcement notification if credible")
+            recommendations.append(
+                "Violence/threat language detected - assess for immediate danger"
+            )
+            recommendations.append(
+                "Consider safety measures and law enforcement notification if credible"
+            )
             recommendations.append("SDG 16: Violence prevention and community safety")
 
         if "mental_health_distress" in flags:

@@ -99,4 +99,26 @@ export const analyzeAspects = async (
   }
 };
 
+export interface UrlFetchResponse {
+  url: string;
+  text: string;
+  title: string | null;
+  length: number;
+}
+
+export const fetchUrlContent = async (url: string): Promise<UrlFetchResponse> => {
+  try {
+    const response = await api.post<UrlFetchResponse>('/fetch-url', { url });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError<ApiError>;
+      throw new Error(
+        axiosError.response?.data?.detail || 'Failed to fetch URL content'
+      );
+    }
+    throw error;
+  }
+};
+
 export default api;

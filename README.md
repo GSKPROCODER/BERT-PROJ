@@ -5,6 +5,8 @@
 
 Production-ready NLP sentiment analysis application using RoBERTa transformers, built with a modern full-stack architecture.
 
+> **🚀 Quick Start**: Just double-click `sentiment-launcher.exe` to run everything automatically!
+
 > **📝 Setup Note**: After cloning, replace `YOUR_USERNAME/YOUR_REPO` in this README with your actual GitHub repository path to enable the CI badge.
 
 ## Architecture
@@ -13,6 +15,8 @@ Production-ready NLP sentiment analysis application using RoBERTa transformers, 
 - **Backend**: FastAPI + Transformers (RoBERTa) + Redis caching
 - **Infrastructure**: Docker + Docker Compose
 - **ML Models**: CPU-optimized PyTorch with RoBERTa-based models
+  - **Sentiment**: [`cardiffnlp/twitter-roberta-base-sentiment-latest`](https://huggingface.co/cardiffnlp/twitter-roberta-base-sentiment-latest) - Fine-tuned for sentiment classification
+  - **Emotion**: [`j-hartmann/emotion-english-distilroberta-base`](https://huggingface.co/j-hartmann/emotion-english-distilroberta-base) - 7-emotion detection model
 
 ## Features
 
@@ -21,13 +25,17 @@ Production-ready NLP sentiment analysis application using RoBERTa transformers, 
 - **Emotion Detection**: 7-emotion classification (joy, sadness, anger, fear, surprise, disgust, neutral)
 - **Aspect-Based Analysis**: Extract and analyze specific aspects from text
 - **Rhetorical Intent**: Detect claim, justification, critique, explanation, and evidence patterns
-- **Risk Detection**: Automated flagging of potentially harmful content
-  - Violence and threats
-  - Self-harm indicators
-  - Hate speech
-  - Extreme negativity
-  - Risk level assessment (low, medium, high)
-  - Actionable recommendations
+- **URL Analysis**: Analyze content from any public URL (articles, blogs, social media posts)
+- **Advanced Risk Detection**: Comprehensive threat monitoring system (SDG 16 & SDG 3)
+  - **Nuclear & WMD Threats**: Nuclear weapons, escalation language, threshold warnings
+  - **War & Military Conflict**: War declarations, military operations, conflict zones
+  - **Conflict Escalation**: Early warning for mobilization, retaliation threats, street action
+  - **Terrorism & Extremism**: Extremist language and radicalization indicators
+  - **Violence & Threats**: Direct violence, weapons, intimidation, dehumanization
+  - **Self-Harm (Critical)**: Suicide ideation, self-injury, hopelessness
+  - **Cyberbullying**: Harassment, hate speech, personal attacks
+  - **Mental Health Distress**: Depression indicators, withdrawal, cognitive symptoms
+  - Risk level assessment (low, medium, high) with actionable recommendations
 
 ### Advanced Insights
 - **Emotional Arc**: Visualize emotion intensity progression across sentences
@@ -48,6 +56,38 @@ Production-ready NLP sentiment analysis application using RoBERTa transformers, 
 - CI/CD with GitHub Actions
 - Production-ready Docker setup
 - CPU-optimized for cost-effective deployment
+
+## 🚀 One-Click Startup
+
+**Just double-click** `sentiment-launcher.exe` - that's it!
+
+The launcher will:
+- 🐳 **Auto-start Docker Desktop** if not running (waits up to 60 seconds)
+- ✅ Verify Docker Compose is available
+- 🏗️ Build all services (Redis, Backend, Frontend)
+- 🚀 Start the complete application
+- 📱 Open at http://localhost:3000
+
+### Interactive Menu
+1. **Start Application** - Launches the full stack
+2. **Stop Application** - Cleanly stops all containers
+3. **Exit** - Close the launcher
+
+### Features
+- ⚡ Native C++ performance
+- 🎨 Colorful console interface
+- 🔄 Automatic Docker startup
+- 🛡️ Built-in error checking
+
+### Rebuild Launcher (if needed)
+```cmd
+g++ -std=c++17 -O2 -static-libgcc -static-libstdc++ launcher.cpp -o sentiment-launcher.exe
+```
+
+### Manual Docker Compose (Alternative)
+```bash
+docker-compose up --build
+```
 
 ## Prerequisites
 

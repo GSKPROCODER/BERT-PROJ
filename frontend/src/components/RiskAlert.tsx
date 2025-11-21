@@ -33,13 +33,22 @@ export default function RiskAlert({ riskAnalysis }: RiskAlertProps): JSX.Element
 
     const getFlagLabel = (flag: string): string => {
         const labels: Record<string, string> = {
-            violence_escalation: 'Violence/Conflict Escalation (SDG 16)',
-            self_harm: 'Self-Harm Risk (Critical)',
-            cyberbullying: 'Cyberbullying/Harassment (SDG 16)',
-            mental_health_distress: 'Mental Health Distress (SDG 3)',
-            extreme_negativity: 'Extreme Negativity',
-            violence: 'Violence',
-            hate_speech: 'Hate Speech',
+            // Critical global security
+            nuclear_threat: '☢️ Nuclear Threat (CRITICAL - Global Security)',
+            war_conflict: '⚔️ War/Military Conflict (SDG 16)',
+            terrorism_extremism: '💣 Terrorism/Extremism (CRITICAL)',
+            conflict_escalation: '📈 Conflict Escalation (Early Warning)',
+            // Violence and threats
+            violence_threat: '🔪 Violence/Threat (SDG 16)',
+            violence_escalation: '⚡ Violence Escalation (SDG 16)',
+            // Individual safety
+            self_harm: '🆘 Self-Harm Risk (CRITICAL)',
+            cyberbullying: '😢 Cyberbullying/Harassment (SDG 16)',
+            mental_health_distress: '🧠 Mental Health Distress (SDG 3)',
+            extreme_negativity: '⬇️ Extreme Negativity',
+            // Legacy
+            violence: '⚠️ Violence',
+            hate_speech: '🚫 Hate Speech',
         };
         return labels[flag] || flag.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     };

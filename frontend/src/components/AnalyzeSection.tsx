@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { analyzeSentiment, analyzeEmotion, analyzeAspects } from '../services/api';
+import { analyzeSentiment, analyzeEmotion, analyzeAspects, fetchUrlContent } from '../services/api';
 import type { ComprehensiveAnalysis } from '../types';
 import EmotionSpectrum from './EmotionSpectrum';
 import AspectSummary from './AspectSummary';
@@ -14,6 +14,8 @@ interface AnalyzeSectionProps {
 
 export default function AnalyzeSection({ onAnalysisComplete, onError }: AnalyzeSectionProps): JSX.Element {
   const [inputText, setInputText] = useState<string>('');
+  const [inputUrl, setInputUrl] = useState<string>('');
+  const [inputMode, setInputMode] = useState<'text' | 'url'>('text');
   const [loading, setLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(null);
   const [analysis, setAnalysis] = useState<ComprehensiveAnalysis | null>(null);
@@ -28,10 +30,50 @@ export default function AnalyzeSection({ onAnalysisComplete, onError }: AnalyzeS
     return texts.length > 0 ? texts : [text.trim()];
   };
 
+  const fetchTextFromUrl = async (url: string): Promise<string> => {
+    try {
+      const result = await fetchUrlContent(url);
+      return result.text;
+    } catch (error) {
+      throw new Error('Failed to fetch content from URL. Make sure the URL is publicly accessible.');
+    }
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    const texts = parseInput(inputText);
+
+    let textToAnalyze = inputText;
+
+    // If URL mode, fetch content first
+    if (inputMode === 'url') {
+      if (!inputUrl.trim()) {
+        if (onError) onError('Please enter a URL to analyze');
+        return;
+      }
+
+      try {
+        setLoading(true);
+        textToAnalyze = await fetchTextFromUrl(inputUrl);
+
+        if (!textToAnalyze || textToAnalyze.length < 10) {
+          if (onError) onError('Could not extract meaningful text from URL');
+          setLoading(false);
+          return;
+        }
+
+        // Limit text length to avoid overwhelming the API
+        if (textToAnalyze.length > 5000) {
+          textToAnalyze = textToAnalyze.substring(0, 5000) + '...';
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch URL content';
+        if (onError) onError(errorMessage);
+        setLoading(false);
+        return;
+      }
+    }
+
+    const texts = parseInput(textToAnalyze);
 
     if (texts.length === 0) {
       if (onError) onError('Please enter some text to analyze');
@@ -105,24 +147,73 @@ export default function AnalyzeSection({ onAnalysisComplete, onError }: AnalyzeS
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <SDGExamplesToggle onSelectExample={(text) => setInputText(text)} />
-        <div>
-          <label htmlFor="analysis-input" className="block text-sm font-medium text-gray-300 mb-2">
-            Enter text to analyze (supports single text or multiple separated by semicolons, commas, or newlines):
-          </label>
-          <textarea
-            id="analysis-input"
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="Enter your text here... For multiple texts, separate with semicolons (;), commas (,), or new lines."
-            className="w-full px-4 py-3 border-2 border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none bg-gray-700 text-gray-100 placeholder-gray-400 transition-all"
-            rows={6}
-            disabled={loading}
-          />
-          <div className="mt-2 text-xs text-gray-400">
-            {textCount} {textCount === 1 ? 'text' : 'texts'} detected
-          </div>
+        <SDGExamplesToggle onSelectExample={(text): void => setInputText(text)} />
+
+        {/* Input Mode Toggle */}
+        <div className="flex gap-2 bg-gray-700 p-1 rounded-lg w-fit">
+          <button
+            type="button"
+            onClick={() => setInputMode('text')}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${inputMode === 'text'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'text-gray-300 hover:text-white'
+              }`}
+          >
+            📝 Text Input
+          </button>
+          <button
+            type="button"
+            onClick={() => setInputMode('url')}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${inputMode === 'url'
+              ? 'bg-blue-600 text-white shadow-md'
+              : 'text-gray-300 hover:text-white'
+              }`}
+          >
+            🔗 URL Input
+          </button>
         </div>
+
+        {/* Text Input Mode */}
+        {inputMode === 'text' && (
+          <div>
+            <label htmlFor="analysis-input" className="block text-sm font-medium text-gray-300 mb-2">
+              Enter text to analyze (supports single text or multiple separated by semicolons, commas, or newlines):
+            </label>
+            <textarea
+              id="analysis-input"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder="Enter your text here... For multiple texts, separate with semicolons (;), commas (,), or new lines."
+              className="w-full px-4 py-3 border-2 border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none bg-gray-700 text-gray-100 placeholder-gray-400 transition-all"
+              rows={6}
+              disabled={loading}
+            />
+            <div className="mt-2 text-xs text-gray-400">
+              {textCount} {textCount === 1 ? 'text' : 'texts'} detected
+            </div>
+          </div>
+        )}
+
+        {/* URL Input Mode */}
+        {inputMode === 'url' && (
+          <div>
+            <label htmlFor="url-input" className="block text-sm font-medium text-gray-300 mb-2">
+              Enter URL to analyze (article, blog post, social media, etc.):
+            </label>
+            <input
+              id="url-input"
+              type="url"
+              value={inputUrl}
+              onChange={(e) => setInputUrl(e.target.value)}
+              placeholder="https://example.com/article"
+              className="w-full px-4 py-3 border-2 border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400 transition-all"
+              disabled={loading}
+            />
+            <div className="mt-2 text-xs text-gray-400">
+              ⚠️ Note: URL must be publicly accessible. CORS restrictions may apply for some websites.
+            </div>
+          </div>
+        )}
 
         {progress && (
           <div className="space-y-2">
@@ -141,23 +232,16 @@ export default function AnalyzeSection({ onAnalysisComplete, onError }: AnalyzeS
 
         <button
           type="submit"
-          disabled={loading || !inputText.trim()}
+          disabled={loading || (inputMode === 'text' ? !inputText.trim() : !inputUrl.trim())}
           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 font-medium shadow-lg hover:shadow-xl disabled:shadow-none"
         >
-          {loading ? 'Analyzing...' : 'Analyze Text'}
+          {loading ? (inputMode === 'url' ? 'Fetching & Analyzing...' : 'Analyzing...') : `Analyze ${inputMode === 'url' ? 'URL' : 'Text'}`}
         </button>
       </form>
 
       {analysis && (
         <div className="mt-8 space-y-6">
           {/* Risk Alert - Full Width */}
-          {(() => {
-            console.log('Analysis object:', analysis);
-            console.log('Sentiment object:', analysis.sentiment);
-            console.log('Risk analysis:', analysis.sentiment?.risk_analysis);
-            console.log('Has risk:', analysis.sentiment?.risk_analysis?.has_risk);
-            return null;
-          })()}
           {analysis.sentiment?.risk_analysis?.has_risk && (
             <RiskAlert riskAnalysis={analysis.sentiment.risk_analysis} />
           )}
